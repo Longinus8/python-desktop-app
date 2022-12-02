@@ -1,19 +1,31 @@
 from tkinter import *
 import pandas
 import random
-import os
+# import os
 BACKGROUND_COLOR = "#B1DDC6"
 ORIGINAL_WORD_FONT = ("Ariel", 40, "italic")
 TRANSLATED_WORD_FONT = ("Ariel", 60, "bold")
 count = 100
 
-data = pandas.read_csv("./data/french_words.csv")
-# making sure that it checked the words to learn first.
-if os.path.exists("data/words_to_learn.csv"):
+
+try:
     data = pandas.read_csv("data/words_to_learn.csv")
+except FileNotFoundError:
+    data = pandas.read_csv("./data/french_words.csv")
+    # the orient="records" is a parameter that organizes our list of dictionary in a specific way
+    # Reference: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_dict.html
     learn = data.to_dict(orient="records")
 else:
     learn = data.to_dict(orient="records")
+
+# ----> The if-else condition worked using the os library to test if the file exist.
+# data = pandas.read_csv("./data/french_words.csv")
+# # making sure that it checked the words to learn first.
+# if os.path.exists("data/words_to_learn.csv"):
+#     data = pandas.read_csv("data/words_to_learn.csv")
+#     learn = data.to_dict(orient="records")
+# else:
+#     learn = data.to_dict(orient="records")
 
 french_english = {}
 
@@ -25,8 +37,6 @@ def next_card():
     """This function helps flip the cards to the next one"""
     global french_english, flip_timer
     window.after_cancel(flip_timer)
-    # the orient="records" is a parameter that organizes our list of dictionary in a specific way
-    # Reference: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_dict.html
     french_english = random.choice(learn)
     # using dictionary unpacking
     french_tuple, english_tuple = french_english.items()
